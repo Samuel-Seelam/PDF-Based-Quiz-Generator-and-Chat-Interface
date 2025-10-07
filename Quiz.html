@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz Generator from Text</title>
+</head>
+<body>
+  <h1>Enter Text for Quiz Generation</h1>
+  <textarea id="textInput" rows="10" cols="80" placeholder="Paste your text here..."></textarea><br/>
+  <button onclick="generateQuiz()">Generate Quiz</button>
+  <pre id="output"></pre>
+
+  <script>
+    async function generateQuiz() {
+      const text = document.getElementById('textInput').value;
+      if (!text.trim()) {
+        alert('Please enter some text first.');
+        return;
+      }
+      document.getElementById('output').textContent = 'Generating quiz...';
+
+      try {
+        const response = await fetch('http://localhost:3000/generate-quiz', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        const quiz = await response.json();
+        document.getElementById('output').textContent = JSON.stringify(quiz, null, 2);
+      } catch (error) {
+        document.getElementById('output').textContent = 'Error: ' + error.message;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>BeyondChats PDF Uploader</title>
+</head>
+<body>
+  <h1>Upload a PDF Coursebook</h1>
+  <input type="file" id="pdfInput" accept="application/pdf" />
+  <button onclick="uploadPDF()">Upload & Extract</button>
+  <div id="output"></div>
+
+  <script>
+    async function uploadPDF() {
+      const pdfInput = document.getElementById('pdfInput');
+      const file = pdfInput.files[0];
+      if (!file) {
+        alert('Please select a PDF file.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('pdf', file);
+
+      document.getElementById('output').innerText = 'Uploading and extracting...';
+
+      try {
+        const response = await fetch('http://localhost:3000/upload-pdf', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        document.getElementById('output').innerText = data.text
+          ? 'Extracted Text: ' + data.text.substring(0, 500) + '...'
+          : 'No text extracted or error occurred.';
+      } catch (err) {
+        document.getElementById('output').innerText = 'Upload failed: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
